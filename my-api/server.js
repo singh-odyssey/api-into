@@ -59,15 +59,39 @@ app.put('/students/:id', (req, res) => {
   const { name, email, age, course } = req.body;
   const studentIndex = students.findIndex(student => student.id === studentId);
   
+  if (studentIndex === -1) {
+    return res.status(404).json({ error: "Student not found" });
+  }
+  
+  // Validate required fields for complete replacement
+  if (!name || !email) {
+    return res.status(400).json({ error: "PUT requires all fields: name and email are required" });
+  }
+  
+  // Complete replacement of student data
+  students[studentIndex] = {
+    id: studentId,
+    name,
+    email,
+    age: age || null,
+    course: course || null
+  };
+  
+  res.json(students[studentIndex]);
+});
+
+app.patch('/students/:id', (req, res) => {
+  const studentId = parseInt(req.params.id);
+  const { name, email, age, course } = req.body;
+  const studentIndex = students.findIndex(student => student.id === studentId);
+  
   if (studentIndex !== -1) {
-    // Update student but keep the original ID
-    students[studentIndex] = {
-      id: studentId,
-      name: name || students[studentIndex].name,
-      email: email || students[studentIndex].email,
-      age: age !== undefined ? age : students[studentIndex].age,
-      course: course !== undefined ? course : students[studentIndex].course
-    };
+    // Partial update - only update fields that are provided
+    if (name !== undefined) students[studentIndex].name = name;
+    if (email !== undefined) students[studentIndex].email = email;
+    if (age !== undefined) students[studentIndex].age = age;
+    if (course !== undefined) students[studentIndex].course = course;
+    
     res.json(students[studentIndex]);
   } else {
     res.status(404).json({ error: "Student not found" });
