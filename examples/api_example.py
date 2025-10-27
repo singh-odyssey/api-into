@@ -41,7 +41,7 @@ def example_2_public_holidays():
         print(f"Found {len(holidays)} holidays")
         # Show first 3 holidays
         for holiday in holidays[:3]:
-            print(f"- {holiday['date']}: {holiday['name']}")
+            print(f"- {holiday['date']}: {holiday['name']}: {holiday['localName']}")
     else:
         print(f"Error: {response.status_code}")
 
